@@ -185,7 +185,23 @@ class BinaryExpressionSyntax(ExpressionSyntax):
     @property
     def right(self):
         return self._right
- 
+
+class SyntaxTree:
+    def __init__(self, diagnostics, root, end_of_file_token):
+        self._diagnostics = diagnostics
+        self._root = root
+        self._end_of_file_token = end_of_file_token
+    
+    @property
+    def diagnostics(self):
+        return self._diagnostics
+    @property
+    def root(self):
+        return self._root
+    @property
+    def end_of_file_token(self):
+        return self._end_of_file_token    
+
 class Parser:
     def __init__(self, text):
         self._diagnostics = []
@@ -233,6 +249,11 @@ class Parser:
         return SyntaxToken(kind, self.current.position, None, None)
 
     def parse(self):
+        expression = self.parse_expression()
+        end_of_file_token = self.match(SyntaxKind.EndOfFileToken)
+        return SyntaxTree(self._diagnostics, expression, end_of_file_token)
+    
+    def parse_expression(self):
         left = self.parse_primary_expression()
 
         while self.current.kind in [SyntaxKind.PlusToken, SyntaxKind.MinusToken]:
@@ -323,8 +344,8 @@ def pretty_print(node, indent="", is_last=True):
     for child in node.get_children():
         pretty_print(child, indent, last_child == child)
 
-console = Console()
-consoleColor = ConsoleColor()
+# console = Console()
+# consoleColor = ConsoleColor()
 
 while True:
     line = input("> ")
@@ -333,14 +354,14 @@ while True:
         break
 
     parser = Parser(line)
-    expression = parser.parse()
+    syntax_tree = parser.parse()
 
-    color = console.foreground_color
-    console.foreground_color = consoleColor.DarkGrey
+    # color = console.foreground_color
+    # console.foreground_color = consoleColor.DarkGrey
 
-    pretty_print(expression)
-    console.foreground_color = color
+    pretty_print(syntax_tree.root)
+    # console.foreground_color = color
 
-    if len(parser.diagnostics) > 0:
-        for _diagnostic in parser.diagnostics:
+    if len(syntax_tree.diagnostics) > 0:
+        for _diagnostic in syntax_tree.diagnostics:
             print(Fore.RED + _diagnostic)
