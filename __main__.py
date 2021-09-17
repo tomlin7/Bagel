@@ -5,6 +5,25 @@ from colorama import Fore
 
 colorama.init(autoreset=True)
 
+# 1 + 2 * 3
+#
+#     +
+#    / \
+#   1   *
+#      / \
+#     2   3
+
+# 1 + 2 + 3
+#
+#       +
+#      / \
+#     +   3
+#    / \
+#   1   2
+
+
+
+
 class SyntaxKind(enum.Enum):
     NumberToken = 1
     WhiteSpaceToken = 2
@@ -16,21 +35,40 @@ class SyntaxKind(enum.Enum):
     CloseParenthesisToken = 8
     BadToken = 9
     EndOfFileToken = 10
+    NumberExpression = 11
+    BinaryExpression = 12
 
+class SyntaxNode:
+    @property
+    def kind(self):
+        pass
 
-class SyntaxToken:
-    kind: SyntaxKind
-    position: int
-    text: str
-    value: any
+    def get_children(self):
+        return []
 
+class SyntaxToken(SyntaxNode):
     def __init__(self, kind, position, text, value):
-        self.kind = kind
-        self.position = position
-        self.text = text
-        self.value = value
+        self._kind = kind
+        self._position = position
+        self._text = text
+        self._value = value
+    
+    @property
+    def kind(self):
+        return self._kind
 
-
+    def get_children(self):
+        return []
+    
+    @property
+    def position(self):
+        return self._position
+    @property
+    def text(self):
+        return self._text
+    @property
+    def value(self):
+        return self._value
 
 class Lexer:
     def __init__(self, text):
@@ -100,6 +138,103 @@ class Lexer:
         self._position += 1
         return SyntaxToken(SyntaxKind.BadToken, self._position, self._text[self._position - 1:1], None)
 
+class ExpressionSyntax(SyntaxNode):
+    pass
+
+class NumberExpressionSyntax(ExpressionSyntax):
+    def __init__(self, number_token):
+        self._number_token = number_token
+    
+    @property
+    def kind(self):
+        return SyntaxKind.NumberExpression
+
+    def get_children(self):
+        return [self.number_token]
+
+    @property
+    def number_token(self):
+        return self._number_token
+
+class BinaryExpressionSyntax(ExpressionSyntax):
+    def __init__(self, left, operator_token, right):
+        self._left = left
+        self._operator_token = operator_token
+        self._right = right
+
+    @property
+    def kind(self):
+        return SyntaxKind.BinaryExpression
+
+    def get_children(self):
+        # can be an array too
+        return [self.left, self.operator_token, self.right]
+
+    @property
+    def left(self):
+        return self._left
+    @property
+    def operator_token(self):
+        return self._operator_token
+    @property
+    def right(self):
+        return self._right
+ 
+class Parser:
+    def __init__(self, text):
+        self._position = 0
+        self._tokens = []
+        
+        lexer = Lexer(text)
+        token = lexer.next_token()
+        
+        self._tokens.append(token)
+
+        while token.kind != SyntaxKind.EndOfFileToken:
+            token = lexer.next_token()
+
+            if token.kind not in [SyntaxKind.WhiteSpaceToken, SyntaxKind.BadToken]:
+                self._tokens.append(token)
+    
+    def peek(self, offset=0):
+        index = self._position + offset
+        if index >= len(self._tokens):
+            return self._tokens[len(self._tokens) - 1]
+
+        return self._tokens[index]
+
+    @property
+    def current(self):
+        return self.peek()
+
+    def next_token(self):
+        current = self.current
+        self._position += 1
+        return current
+    
+    def match(self, kind):
+        if self.current.kind == kind:
+            return self.next_token()
+        
+        return SyntaxToken(kind, self.current.position, None, None)
+
+    def parse(self):
+        left = self.parse_primary_expression()
+
+        while self.current.kind in [SyntaxKind.PlusToken, SyntaxKind.MinusToken]:
+            operator_token = self.next_token()
+            right = self.parse_primary_expression()
+            left = BinaryExpressionSyntax(left, operator_token, right)
+        
+        return left
+
+    def parse_primary_expression(self):
+        number_token = self.match(SyntaxKind.NumberToken)
+        return NumberExpressionSyntax(number_token)
+    
+    def parse_binary_expression(self):
+        pass
+
 class Colors:
     @staticmethod
     def get_color(kind):
@@ -114,16 +249,80 @@ class Colors:
         else:
             return Fore.RED
 
+class ConsoleColor:
+    @property
+    def Red(self): return Fore.RED
+    @property
+    def Green(self): return Fore.GREEN
+    @property
+    def Yellow(self): return Fore.YELLOW
+    @property
+    def Blue(self): return Fore.BLUE
+    @property
+    def Magenta(self): return Fore.MAGENTA
+    @property
+    def Cyan(self): return Fore.CYAN
+    @property
+    def White(self): return Fore.WHITE
+    @property
+    def Black(self): return Fore.BLACK
+    @property
+    def DarkGrey(self): return Fore.LIGHTBLACK_EX
+    @property
+    def Default(self): return Fore.RESET
+
+class Console:
+    def __init__(self):
+        self.foreground_color = ConsoleColor().Default
+    
+    def write(self, *args):
+        print(self.foreground_color + ''.join(args))
+
+    def reset(self):
+        self.foreground_color = ConsoleColor().Default
+
+def pretty_print(node, indent="", is_last=True):
+    # └──
+    # ├──
+    # │ 
+
+    marker = '└──' if is_last else '├──'
+
+    print(indent, end="")
+    print(marker, end="")
+    print(node.kind.name, end="")
+    
+    if type(node) is SyntaxToken:
+        if node.value is not None:
+            print(" ", end="")
+            print(node.value, end="")
+
+    print()
+
+    indent += '    ' if is_last else '│   '
+
+    try:
+        last_child = node.get_children()[-1]
+    except:
+        last_child = None
+
+    for child in node.get_children():
+        pretty_print(child, indent, last_child == child)
+
+console = Console()
+consoleColor = ConsoleColor()
+
 while True:
     line = input("> ")
 
     if line is None or line == "":
         break
 
-    lexer = Lexer(line)
-    while True:
-        token = lexer.next_token()
-        if token.kind == SyntaxKind.EndOfFileToken:
-            break
-            
-        print(Colors.get_color(token.kind) + f"{token.kind}: '{token.text}' {token.value if token.value is not None else ''}")
+    parser = Parser(line)
+    expression = parser.parse()
+
+    color = console.foreground_color
+    console.foreground_color = consoleColor.DarkGrey
+
+    pretty_print(expression)
+    console.foreground_color = color
