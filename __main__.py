@@ -74,7 +74,12 @@ class Lexer:
     def __init__(self, text):
         self._text = text
         self._position = 0
+        self._diagnostics = []
     
+    @property
+    def diagnostics(self):
+        return self._diagnostics
+
     @property
     def current(self):
         if self._position >= len(self._text):
@@ -135,6 +140,7 @@ class Lexer:
             self._position += 1
             return SyntaxToken(SyntaxKind.CloseParenthesisToken, self._position, ')', None)
 
+        self._diagnostics.append(f"ERROR: bad character input: '{self.current}'")
         self._position += 1
         return SyntaxToken(SyntaxKind.BadToken, self._position, self._text[self._position - 1:1], None)
 
@@ -182,6 +188,7 @@ class BinaryExpressionSyntax(ExpressionSyntax):
  
 class Parser:
     def __init__(self, text):
+        self._diagnostics = []
         self._position = 0
         self._tokens = []
         
@@ -195,6 +202,12 @@ class Parser:
 
             if token.kind not in [SyntaxKind.WhiteSpaceToken, SyntaxKind.BadToken]:
                 self._tokens.append(token)
+        
+        self._diagnostics += lexer.diagnostics
+    
+    @property
+    def diagnostics(self):
+        return self._diagnostics
     
     def peek(self, offset=0):
         index = self._position + offset
@@ -216,6 +229,7 @@ class Parser:
         if self.current.kind == kind:
             return self.next_token()
         
+        self._diagnostics.append(f"ERROR: Unexpected token <'{self.current.kind}'>, expected <{kind}>")
         return SyntaxToken(kind, self.current.position, None, None)
 
     def parse(self):
@@ -326,3 +340,7 @@ while True:
 
     pretty_print(expression)
     console.foreground_color = color
+
+    if len(parser.diagnostics) > 0:
+        for _diagnostic in parser.diagnostics:
+            print(Fore.RED + _diagnostic)
