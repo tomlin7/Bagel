@@ -108,7 +108,7 @@ class Lexer:
             try:
                 value = int(text)
             except ValueError:
-                print("ERROR: Invalid number!")
+                self._diagnostics.append(f"The number {self._text} isn't a valid int.")
             return SyntaxToken(SyntaxKind.NumberToken, start, text, value)
 
         if self.current.isspace():
@@ -270,6 +270,38 @@ class Parser:
     def parse_binary_expression(self):
         pass
 
+class Evaluator:
+    def __init__(self, root):
+        self._root = root
+
+    def evaluate(self):
+        return self.evaluate_expression(self._root)
+
+    def evaluate_expression(self, node):
+        # binary expression
+        # number expression
+
+        if type(node) is NumberExpressionSyntax:
+            return int(node.number_token.value)
+
+        if type(node) is BinaryExpressionSyntax:
+            left = self.evaluate_expression(node.left)
+            right = self.evaluate_expression(node.right)
+
+            if node.operator_token.kind == SyntaxKind.PlusToken:
+                return left + right
+            elif node.operator_token.kind == SyntaxKind.MinusToken:
+                return left - right
+            elif node.operator_token.kind == SyntaxKind.StarToken:
+                return left * right
+            elif node.operator_token.kind == SyntaxKind.SlashToken:
+                return left / right
+            else:
+                raise Exception(f"Unexpected binary operator {node.operator_token.kind}")
+    
+        raise Exception(f"Unexpected node {node.kind}")
+            
+
 class Colors:
     @staticmethod
     def get_color(kind):
@@ -362,6 +394,10 @@ while True:
     pretty_print(syntax_tree.root)
     # console.foreground_color = color
 
-    if len(syntax_tree.diagnostics) > 0:
+    if not len(syntax_tree.diagnostics) > 0:
+        evaluator = Evaluator(syntax_tree.root)
+        result = evaluator.evaluate()
+        print(str(result))
+    else:
         for _diagnostic in syntax_tree.diagnostics:
             print(Fore.RED + _diagnostic)
