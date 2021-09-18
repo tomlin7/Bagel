@@ -37,6 +37,7 @@ class SyntaxKind(enum.Enum):
     EndOfFileToken = 10
     NumberExpression = 11
     BinaryExpression = 12
+    ParenthesizedExpression = 13
 
 class SyntaxNode:
     @property
@@ -186,6 +187,29 @@ class BinaryExpressionSyntax(ExpressionSyntax):
     def right(self):
         return self._right
 
+class ParenthesizedExpressionSyntax(ExpressionSyntax):
+    def __init__(self, open_parenthesis_token, expression, close_parenthesis_token):
+        self._open_parenthesis_token = open_parenthesis_token
+        self._expression = expression
+        self._close_parenthesis_token = close_parenthesis_token
+
+    @property
+    def kind(self):
+        return SyntaxKind.ParenthesizedExpression
+
+    def get_children(self):
+        return [self.open_parenthesis_token, self.expression, self.close_parenthesis_token]
+
+    @property
+    def open_parenthesis_token(self):
+        return self._open_parenthesis_token
+    @property
+    def expression(self):
+        return self._expression
+    @property
+    def close_parenthesis_token(self):
+        return self._close_parenthesis_token
+
 class SyntaxTree:
     def __init__(self, diagnostics, root, end_of_file_token):
         self._diagnostics = diagnostics
@@ -200,7 +224,12 @@ class SyntaxTree:
         return self._root
     @property
     def end_of_file_token(self):
-        return self._end_of_file_token    
+        return self._end_of_file_token   
+
+    @staticmethod
+    def parse(text):
+        parser = Parser(text)
+        return parser.parse() 
 
 class Parser:
     def __init__(self, text):
@@ -249,21 +278,42 @@ class Parser:
         return SyntaxToken(kind, self.current.position, None, None)
 
     def parse(self):
-        expression = self.parse_expression()
+        expression = self.parse_term()
         end_of_file_token = self.match(SyntaxKind.EndOfFileToken)
         return SyntaxTree(self._diagnostics, expression, end_of_file_token)
     
     def parse_expression(self):
-        left = self.parse_primary_expression()
+        return self.parse_term()
+    
+    def parse_term(self):
+        left = self.parse_factor()
 
         while self.current.kind in [SyntaxKind.PlusToken, SyntaxKind.MinusToken]:
+            operator_token = self.next_token()
+            right = self.parse_factor()
+            left = BinaryExpressionSyntax(left, operator_token, right)
+        
+        return left
+
+    # parse_multiplicative_expression
+    def parse_factor(self):
+        left = self.parse_primary_expression()
+
+        while self.current.kind in [SyntaxKind.StarToken, SyntaxKind.SlashToken]:
             operator_token = self.next_token()
             right = self.parse_primary_expression()
             left = BinaryExpressionSyntax(left, operator_token, right)
         
         return left
 
+
     def parse_primary_expression(self):
+        if self.current.kind == SyntaxKind.OpenParenthesisToken:
+            left = self.next_token()
+            expression = self.parse_expression()
+            right = self.match(SyntaxKind.CloseParenthesisToken)
+            return ParenthesizedExpressionSyntax(left, expression, right)
+
         number_token = self.match(SyntaxKind.NumberToken)
         return NumberExpressionSyntax(number_token)
     
@@ -298,9 +348,11 @@ class Evaluator:
                 return left / right
             else:
                 raise Exception(f"Unexpected binary operator {node.operator_token.kind}")
-    
+
+        if type(node) is ParenthesizedExpressionSyntax:
+            return self.evaluate_expression(node.expression)
+
         raise Exception(f"Unexpected node {node.kind}")
-            
 
 class Colors:
     @staticmethod
@@ -385,8 +437,7 @@ while True:
     if line is None or line == "":
         break
 
-    parser = Parser(line)
-    syntax_tree = parser.parse()
+    syntax_tree = SyntaxTree.parse(line)
 
     # color = console.foreground_color
     # console.foreground_color = consoleColor.DarkGrey
