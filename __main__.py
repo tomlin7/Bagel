@@ -1,9 +1,10 @@
-import enum
+import enum, os
 
 import colorama
 from colorama import Fore
 
 colorama.init(autoreset=True)
+clear = lambda: os.system('cls')
 
 # 1 + 2 * 3
 #
@@ -431,19 +432,29 @@ def pretty_print(node, indent="", is_last=True):
 # console = Console()
 # consoleColor = ConsoleColor()
 
+showtree = False
 while True:
     line = input("> ")
 
     if line is None or line == "":
         break
 
+    if line == "#showtree":
+        showtree = not showtree
+        print("Showing parser trees" if showtree else "Not showing parser trees")
+        continue
+    elif line == "#cls":
+        clear()
+        continue
+
     syntax_tree = SyntaxTree.parse(line)
 
-    # color = console.foreground_color
-    # console.foreground_color = consoleColor.DarkGrey
+    if showtree:
+        # color = console.foreground_color
+        # console.foreground_color = consoleColor.DarkGrey
 
-    pretty_print(syntax_tree.root)
-    # console.foreground_color = color
+        pretty_print(syntax_tree.root)
+        # console.foreground_color = color
 
     if not len(syntax_tree.diagnostics) > 0:
         evaluator = Evaluator(syntax_tree.root)
