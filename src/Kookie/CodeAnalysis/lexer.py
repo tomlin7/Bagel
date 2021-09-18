@@ -3,25 +3,25 @@ from CodeAnalysis.syntaxtoken import SyntaxToken
 
 
 class Lexer:
-    def __init__(self, text):
+    def __init__(self, text: str):
         self._text = text
         self._position = 0
         self._diagnostics = []
     
     @property
-    def diagnostics(self):
+    def diagnostics(self) -> list:
         return self._diagnostics
 
     @property
-    def current(self):
+    def current(self) -> str:
         if self._position >= len(self._text):
             return '\0'
         return self._text[self._position]
 
-    def next(self):
+    def next(self) -> None:
         self._position += 1
 
-    def next_token(self):
+    def next_token(self) -> SyntaxToken:
         if self._position >= len(self._text):
             return SyntaxToken(SyntaxKind.EndOfFileToken, self._position, '\0', None)
 

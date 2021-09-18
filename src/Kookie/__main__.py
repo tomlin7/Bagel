@@ -4,14 +4,15 @@ import colorama
 from colorama import Fore
 
 from CodeAnalysis.evaluator import Evaluator
+from CodeAnalysis.syntaxnode import SyntaxNode
 from CodeAnalysis.syntaxtoken import SyntaxToken
 from CodeAnalysis.syntaxtree import SyntaxTree
 
 colorama.init(autoreset=True)
-showtree = False
+show_tree = False
 
 
-def pretty_print(node, indent="", is_last=True):
+def pretty_print(node: SyntaxNode, indent: str = "", is_last: bool = True):
     marker = '└──' if is_last else '├──'
 
     print(indent, end="")
@@ -25,7 +26,7 @@ def pretty_print(node, indent="", is_last=True):
 
     print()
 
-    indent += '    ' if is_last else '│   '
+    indent += '   ' if is_last else '│   '
 
     try:
         last_child = node.get_children()[-1]
@@ -66,8 +67,8 @@ while True:
         break
 
     if line == "#showtree":
-        showtree = not showtree
-        print("Showing parser trees" if showtree else "Not showing parser trees")
+        show_tree = not show_tree
+        print("Showing parser trees" if show_tree else "Not showing parser trees")
         continue
     elif line == "#cls":
         os.system('cls')
@@ -75,7 +76,7 @@ while True:
 
     syntax_tree = SyntaxTree.parse(line)
 
-    if showtree:
+    if show_tree:
         pretty_print(syntax_tree.root)
 
     if not len(syntax_tree.diagnostics) > 0:

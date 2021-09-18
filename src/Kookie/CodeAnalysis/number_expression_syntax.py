@@ -1,18 +1,19 @@
 from CodeAnalysis.expression_syntax import ExpressionSyntax
 from CodeAnalysis.syntaxkind import SyntaxKind
+from CodeAnalysis.syntaxtoken import SyntaxToken
 
 
 class NumberExpressionSyntax(ExpressionSyntax):
-    def __init__(self, number_token):
+    def __init__(self, number_token: SyntaxToken):
         self._number_token = number_token
 
     @property
-    def kind(self):
+    def kind(self) -> SyntaxKind:
         return SyntaxKind.NumberExpression
 
-    def get_children(self):
+    def get_children(self) -> list:
         return [self.number_token]
 
     @property
-    def number_token(self):
+    def number_token(self) -> SyntaxToken:
         return self._number_token

@@ -1,4 +1,5 @@
 from CodeAnalysis.binary_expression_syntax import BinaryExpressionSyntax
+from CodeAnalysis.expression_syntax import ExpressionSyntax
 from CodeAnalysis.lexer import Lexer
 from CodeAnalysis.number_expression_syntax import NumberExpressionSyntax
 from CodeAnalysis.parenthesized_expression_syntax import ParenthesizedExpressionSyntax
@@ -8,7 +9,7 @@ from CodeAnalysis.syntaxtree import SyntaxTree
 
 
 class Parser:
-    def __init__(self, text):
+    def __init__(self, text: str):
         self._diagnostics = []
         self._position = 0
         self._tokens = []
@@ -27,10 +28,10 @@ class Parser:
         self._diagnostics += lexer.diagnostics
 
     @property
-    def diagnostics(self):
+    def diagnostics(self) -> list:
         return self._diagnostics
 
-    def peek(self, offset=0):
+    def peek(self, offset: int = 0) -> SyntaxToken:
         index = self._position + offset
         if index >= len(self._tokens):
             return self._tokens[len(self._tokens) - 1]
@@ -38,30 +39,30 @@ class Parser:
         return self._tokens[index]
 
     @property
-    def current(self):
+    def current(self) -> SyntaxToken:
         return self.peek()
 
-    def next_token(self):
+    def next_token(self) -> SyntaxToken:
         current = self.current
         self._position += 1
         return current
 
-    def match(self, kind):
+    def match(self, kind: SyntaxKind) -> SyntaxToken:
         if self.current.kind == kind:
             return self.next_token()
 
         self._diagnostics.append(f"ERROR: Unexpected token <'{self.current.kind}'>, expected <{kind}>")
         return SyntaxToken(kind, self.current.position, None, None)
 
-    def parse(self):
+    def parse(self) -> SyntaxTree:
         expression = self.parse_term()
         end_of_file_token = self.match(SyntaxKind.EndOfFileToken)
         return SyntaxTree(self._diagnostics, expression, end_of_file_token)
 
-    def parse_expression(self):
+    def parse_expression(self) -> ExpressionSyntax:
         return self.parse_term()
 
-    def parse_term(self):
+    def parse_term(self) -> ExpressionSyntax:
         left = self.parse_factor()
 
         while self.current.kind in [SyntaxKind.PlusToken, SyntaxKind.MinusToken]:
@@ -71,8 +72,7 @@ class Parser:
 
         return left
 
-    # parse_multiplicative_expression
-    def parse_factor(self):
+    def parse_factor(self) -> ExpressionSyntax:
         left = self.parse_primary_expression()
 
         while self.current.kind in [SyntaxKind.StarToken, SyntaxKind.SlashToken]:
@@ -82,7 +82,7 @@ class Parser:
 
         return left
 
-    def parse_primary_expression(self):
+    def parse_primary_expression(self) -> ExpressionSyntax:
         if self.current.kind == SyntaxKind.OpenParenthesisToken:
             left = self.next_token()
             expression = self.parse_expression()
@@ -91,6 +91,3 @@ class Parser:
 
         number_token = self.match(SyntaxKind.NumberToken)
         return NumberExpressionSyntax(number_token)
-
-    def parse_binary_expression(self):
-        pass
