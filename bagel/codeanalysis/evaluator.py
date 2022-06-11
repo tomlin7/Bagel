@@ -1,6 +1,6 @@
 from .binary_expression_syntax import BinaryExpressionSyntax
 from .expression_syntax import ExpressionSyntax
-from .number_expression_syntax import NumberExpressionSyntax
+from .literal_expression_syntax import LiteralExpressionSyntax
 from .parenthesized_expression_syntax import ParenthesizedExpressionSyntax
 from .syntaxkind import SyntaxKind
 
@@ -13,7 +13,7 @@ class Evaluator:
         return self.evaluate_expression(self._root)
 
     def evaluate_expression(self, node: ExpressionSyntax) -> int:
-        if type(node) is NumberExpressionSyntax:
+        if type(node) is LiteralExpressionSyntax:
             return int(node.number_token.value)
 
         if type(node) is BinaryExpressionSyntax:

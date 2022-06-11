@@ -1,7 +1,7 @@
 from .binary_expression_syntax import BinaryExpressionSyntax
 from .expression_syntax import ExpressionSyntax
 from .lexer import Lexer
-from .number_expression_syntax import NumberExpressionSyntax
+from .literal_expression_syntax import LiteralExpressionSyntax
 from .parenthesized_expression_syntax import ParenthesizedExpressionSyntax
 from .syntaxkind import SyntaxKind
 from .syntaxtoken import SyntaxToken
@@ -47,7 +47,7 @@ class Parser:
         self._position += 1
         return current
 
-    def match(self, kind: SyntaxKind) -> SyntaxToken:
+    def match_token(self, kind: SyntaxKind) -> SyntaxToken:
         if self.current.kind == kind:
             return self.next_token()
 
@@ -55,8 +55,8 @@ class Parser:
         return SyntaxToken(kind, self.current.position, None, None)
 
     def parse(self) -> SyntaxTree:
-        expression = self.parse_term()
-        end_of_file_token = self.match(SyntaxKind.EndOfFileToken)
+        expression = self.parse_expression()
+        end_of_file_token = self.match_token(SyntaxKind.EndOfFileToken)
         return SyntaxTree(self._diagnostics, expression, end_of_file_token)
 
     def parse_expression(self) -> ExpressionSyntax:
@@ -86,8 +86,9 @@ class Parser:
         if self.current.kind == SyntaxKind.OpenParenthesisToken:
             left = self.next_token()
             expression = self.parse_expression()
-            right = self.match(SyntaxKind.CloseParenthesisToken)
+            right = self.match_token(SyntaxKind.CloseParenthesisToken)
             return ParenthesizedExpressionSyntax(left, expression, right)
 
-        number_token = self.match(SyntaxKind.NumberToken)
-        return NumberExpressionSyntax(number_token)
+        number_token = self.match_token(SyntaxKind.NumberToken)
+        return LiteralExpressionSyntax(number_token)
+
