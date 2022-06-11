@@ -1,3 +1,4 @@
+from bagel.codeanalysis.unary_expression_syntax import UnaryExpressionSyntax
 from .binary_expression_syntax import BinaryExpressionSyntax
 from .expression_syntax import ExpressionSyntax
 from .lexer import Lexer
@@ -62,7 +63,14 @@ class Parser:
         return SyntaxTree(self._diagnostics, expression, end_of_file_token)
 
     def parse_expression(self, parent_precedence: int=0) -> ExpressionSyntax:
-        left = self.parse_primary_expression()
+        left = None
+        unary_operator_precedence = SyntaxFacts.get_unary_operator_precedence(self.current.kind)
+        if unary_operator_precedence != 0 and unary_operator_precedence >= parent_precedence:
+            operator_token = self.next_token()
+            operand = self.parse_expression(unary_operator_precedence)
+            left = UnaryExpressionSyntax(operator_token, operand)
+        else:
+            left = self.parse_primary_expression()
 
         while True:
             precedence = SyntaxFacts.get_binary_operator_precedence(self.current.kind)

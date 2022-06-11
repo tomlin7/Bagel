@@ -16,5 +16,6 @@ class SyntaxKind(enum.Enum):
     
     # Expressions
     LiteralExpression = 10
-    BinaryExpression = 11
-    ParenthesizedExpression = 12
+    UnaryExpression = 11
+    BinaryExpression = 12
+    ParenthesizedExpression = 13

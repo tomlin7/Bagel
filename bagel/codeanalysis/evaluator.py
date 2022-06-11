@@ -1,3 +1,4 @@
+from bagel.codeanalysis.unary_expression_syntax import UnaryExpressionSyntax
 from .binary_expression_syntax import BinaryExpressionSyntax
 from .expression_syntax import ExpressionSyntax
 from .literal_expression_syntax import LiteralExpressionSyntax
@@ -13,10 +14,20 @@ class Evaluator:
         return self.evaluate_expression(self._root)
 
     def evaluate_expression(self, node: ExpressionSyntax) -> int:
-        if type(node) is LiteralExpressionSyntax:
+        if isinstance(node, LiteralExpressionSyntax):
             return int(node.literal_token.value)
 
-        if type(node) is BinaryExpressionSyntax:
+        if isinstance(node, UnaryExpressionSyntax):
+            operand = self.evaluate_expression(node.operand)
+            
+            if node.operator_token.kind == SyntaxKind.PlusToken:
+                return operand
+            if node.operator_token.kind == SyntaxKind.MinusToken:
+                return -operand
+            
+            raise Exception(f"Unexpected unary operator {node.operator_token.kind}")
+
+        if isinstance(node, BinaryExpressionSyntax):
             left = self.evaluate_expression(node.left)
             right = self.evaluate_expression(node.right)
 
@@ -31,7 +42,7 @@ class Evaluator:
             else:
                 raise Exception(f"Unexpected binary operator {node.operator_token.kind}")
 
-        if type(node) is ParenthesizedExpressionSyntax:
+        if isinstance(node, ParenthesizedExpressionSyntax):
             return self.evaluate_expression(node.expression)
 
         raise Exception(f"Unexpected node {node.kind}")
