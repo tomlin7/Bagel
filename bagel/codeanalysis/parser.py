@@ -6,6 +6,7 @@ from .parenthesized_expression_syntax import ParenthesizedExpressionSyntax
 from .syntaxkind import SyntaxKind
 from .syntaxtoken import SyntaxToken
 from .syntaxtree import SyntaxTree
+from .syntaxfacts import SyntaxFacts
 
 
 class Parser:
@@ -64,7 +65,7 @@ class Parser:
         left = self.parse_primary_expression()
 
         while True:
-            precedence = self.get_binary_operator_precedence(self.current.kind)
+            precedence = SyntaxFacts.get_binary_operator_precedence(self.current.kind)
             if not precedence or precedence <= parent_precedence:
                 break
 
@@ -73,16 +74,6 @@ class Parser:
             left = BinaryExpressionSyntax(left, operator_token, right)
 
         return left
-
-    @staticmethod
-    def get_binary_operator_precedence(kind: SyntaxKind) -> int:
-        match kind:
-            case SyntaxKind.StarToken | SyntaxKind.SlashToken:
-                return 2
-            case SyntaxKind.PlusToken | SyntaxKind.MinusToken:
-                return 1
-            case _:
-                return 0
 
     def parse_primary_expression(self) -> ExpressionSyntax:
         if self.current.kind == SyntaxKind.OpenParenthesisToken:
