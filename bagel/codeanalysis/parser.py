@@ -15,12 +15,12 @@ class Parser:
         self._tokens = []
 
         lexer = Lexer(text)
-        token = lexer.next_token()
+        token = lexer.lex()
 
         self._tokens.append(token)
 
         while token.kind != SyntaxKind.EndOfFileToken:
-            token = lexer.next_token()
+            token = lexer.lex()
 
             if token.kind not in [SyntaxKind.WhiteSpaceToken, SyntaxKind.BadToken]:
                 self._tokens.append(token)
@@ -89,6 +89,6 @@ class Parser:
             right = self.match_token(SyntaxKind.CloseParenthesisToken)
             return ParenthesizedExpressionSyntax(left, expression, right)
 
-        number_token = self.match_token(SyntaxKind.NumberToken)
-        return LiteralExpressionSyntax(number_token)
+        literal_token = self.match_token(SyntaxKind.NumberToken)
+        return LiteralExpressionSyntax(literal_token)
 

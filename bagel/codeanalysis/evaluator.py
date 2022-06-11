@@ -14,7 +14,7 @@ class Evaluator:
 
     def evaluate_expression(self, node: ExpressionSyntax) -> int:
         if type(node) is LiteralExpressionSyntax:
-            return int(node.number_token.value)
+            return int(node.literal_token.value)
 
         if type(node) is BinaryExpressionSyntax:
             left = self.evaluate_expression(node.left)

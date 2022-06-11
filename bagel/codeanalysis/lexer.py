@@ -7,7 +7,7 @@ class Lexer:
         self._text = text
         self._position = 0
         self._diagnostics = []
-    
+
     @property
     def diagnostics(self) -> list:
         return self._diagnostics
@@ -21,7 +21,7 @@ class Lexer:
     def next(self) -> None:
         self._position += 1
 
-    def next_token(self) -> SyntaxToken:
+    def lex(self) -> SyntaxToken:
         if self._position >= len(self._text):
             return SyntaxToken(SyntaxKind.EndOfFileToken, self._position, '\0', None)
 
@@ -30,7 +30,7 @@ class Lexer:
 
             while self.current.isdigit():
                 self.next()
-            
+
             length = self._position - start
             text = self._text[start:length + start]
             try:
@@ -44,30 +44,32 @@ class Lexer:
 
             while self.current.isspace():
                 self.next()
-            
+
             length = self._position - start
             text = self._text[start:length + start]
             return SyntaxToken(SyntaxKind.WhiteSpaceToken, start, text, None)
 
-        if self.current == '+':
-            self._position += 1
-            return SyntaxToken(SyntaxKind.PlusToken, self._position, '+', None)
-        elif self.current == '-':
-            self._position += 1
-            return SyntaxToken(SyntaxKind.MinusToken, self._position, '-', None)
-        elif self.current == '*':
-            self._position += 1
-            return SyntaxToken(SyntaxKind.StarToken, self._position, '*', None)
-        elif self.current == '/':
-            self._position += 1
-            return SyntaxToken(SyntaxKind.SlashToken, self._position, '/', None)
-        elif self.current == '(':
-            self._position += 1
-            return SyntaxToken(SyntaxKind.OpenParenthesisToken, self._position, '(', None)
-        elif self.current == ')':
-            self._position += 1
-            return SyntaxToken(SyntaxKind.CloseParenthesisToken, self._position, ')', None)
+        match self.current:
+            case '+':
+                self._position += 1
+                return SyntaxToken(SyntaxKind.PlusToken, self._position, '+', None)
+            case '-':
+                self._position += 1
+                return SyntaxToken(SyntaxKind.MinusToken, self._position, '-', None)
+            case '*':
+                self._position += 1
+                return SyntaxToken(SyntaxKind.StarToken, self._position, '*', None)
+            case '/':
+                self._position += 1
+                return SyntaxToken(SyntaxKind.SlashToken, self._position, '/', None)
+            case '(':
+                self._position += 1
+                return SyntaxToken(SyntaxKind.OpenParenthesisToken, self._position, '(', None)
+            case ')':
+                self._position += 1
+                return SyntaxToken(SyntaxKind.CloseParenthesisToken, self._position, ')', None)
 
         self._diagnostics.append(f"ERROR: bad character input: '{self.current}'")
         self._position += 1
-        return SyntaxToken(SyntaxKind.BadToken, self._position, self._text[self._position - 1:1], None)
+        return SyntaxToken(
+            SyntaxKind.BadToken, self._position, self._text[self._position - 1:1], None)
