@@ -1,8 +1,8 @@
-from CodeAnalysis.binary_expression_syntax import BinaryExpressionSyntax
-from CodeAnalysis.expression_syntax import ExpressionSyntax
-from CodeAnalysis.number_expression_syntax import NumberExpressionSyntax
-from CodeAnalysis.parenthesized_expression_syntax import ParenthesizedExpressionSyntax
-from CodeAnalysis.syntaxkind import SyntaxKind
+from .binary_expression_syntax import BinaryExpressionSyntax
+from .expression_syntax import ExpressionSyntax
+from .number_expression_syntax import NumberExpressionSyntax
+from .parenthesized_expression_syntax import ParenthesizedExpressionSyntax
+from .syntaxkind import SyntaxKind
 
 
 class Evaluator:

@@ -1,5 +1,5 @@
-from CodeAnalysis.syntaxkind import SyntaxKind
-from CodeAnalysis.syntaxtoken import SyntaxToken
+from .syntaxkind import SyntaxKind
+from .syntaxtoken import SyntaxToken
 
 
 class Lexer:

@@ -1,6 +1,6 @@
-from CodeAnalysis.expression_syntax import ExpressionSyntax
-from CodeAnalysis.syntaxkind import SyntaxKind
-from CodeAnalysis.syntaxtoken import SyntaxToken
+from .expression_syntax import ExpressionSyntax
+from .syntaxkind import SyntaxKind
+from .syntaxtoken import SyntaxToken
 
 
 class NumberExpressionSyntax(ExpressionSyntax):

@@ -1,11 +1,11 @@
-from CodeAnalysis.binary_expression_syntax import BinaryExpressionSyntax
-from CodeAnalysis.expression_syntax import ExpressionSyntax
-from CodeAnalysis.lexer import Lexer
-from CodeAnalysis.number_expression_syntax import NumberExpressionSyntax
-from CodeAnalysis.parenthesized_expression_syntax import ParenthesizedExpressionSyntax
-from CodeAnalysis.syntaxkind import SyntaxKind
-from CodeAnalysis.syntaxtoken import SyntaxToken
-from CodeAnalysis.syntaxtree import SyntaxTree
+from .binary_expression_syntax import BinaryExpressionSyntax
+from .expression_syntax import ExpressionSyntax
+from .lexer import Lexer
+from .number_expression_syntax import NumberExpressionSyntax
+from .parenthesized_expression_syntax import ParenthesizedExpressionSyntax
+from .syntaxkind import SyntaxKind
+from .syntaxtoken import SyntaxToken
+from .syntaxtree import SyntaxTree
 
 
 class Parser:

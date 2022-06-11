@@ -1,5 +1,5 @@
-from CodeAnalysis.expression_syntax import ExpressionSyntax
-from CodeAnalysis.syntaxtoken import SyntaxToken
+from .expression_syntax import ExpressionSyntax
+from .syntaxtoken import SyntaxToken
 
 
 class SyntaxTree:
@@ -22,6 +22,6 @@ class SyntaxTree:
 
     @staticmethod
     def parse(text: str) -> object:
-        from CodeAnalysis.parser import Parser
+        from .parser import Parser
         parser = Parser(text)
         return parser.parse()

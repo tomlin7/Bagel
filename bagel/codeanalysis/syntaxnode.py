@@ -1,4 +1,4 @@
-from CodeAnalysis.syntaxkind import SyntaxKind
+from .syntaxkind import SyntaxKind
 
 
 class SyntaxNode:

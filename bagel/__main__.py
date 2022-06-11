@@ -3,10 +3,10 @@ import os
 import colorama
 from colorama import Fore
 
-from CodeAnalysis.evaluator import Evaluator
-from CodeAnalysis.syntaxnode import SyntaxNode
-from CodeAnalysis.syntaxtoken import SyntaxToken
-from CodeAnalysis.syntaxtree import SyntaxTree
+from .codeanalysis.evaluator import Evaluator
+from .codeanalysis.syntaxnode import SyntaxNode
+from .codeanalysis.syntaxtoken import SyntaxToken
+from .codeanalysis.syntaxtree import SyntaxTree
 
 colorama.init(autoreset=True)
 show_tree = False

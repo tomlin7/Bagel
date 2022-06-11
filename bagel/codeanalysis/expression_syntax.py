@@ -1,4 +1,4 @@
-from CodeAnalysis.syntaxnode import SyntaxNode
+from .syntaxnode import SyntaxNode
 
 
 class ExpressionSyntax(SyntaxNode):

@@ -1,5 +1,5 @@
-from CodeAnalysis.syntaxkind import SyntaxKind
-from CodeAnalysis.syntaxnode import SyntaxNode
+from .syntaxkind import SyntaxKind
+from .syntaxnode import SyntaxNode
 
 
 class SyntaxToken(SyntaxNode):
