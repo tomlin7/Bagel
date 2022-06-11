@@ -1,4 +1,4 @@
-from bagel.codeanalysis.unary_expression_syntax import UnaryExpressionSyntax
+from .unary_expression_syntax import UnaryExpressionSyntax
 from .binary_expression_syntax import BinaryExpressionSyntax
 from .expression_syntax import ExpressionSyntax
 from .lexer import Lexer

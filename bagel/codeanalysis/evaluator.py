@@ -1,9 +1,10 @@
-from bagel.codeanalysis.unary_expression_syntax import UnaryExpressionSyntax
-from .binary_expression_syntax import BinaryExpressionSyntax
-from .expression_syntax import ExpressionSyntax
-from .literal_expression_syntax import LiteralExpressionSyntax
-from .parenthesized_expression_syntax import ParenthesizedExpressionSyntax
-from .syntaxkind import SyntaxKind
+from .syntax.binary_expression_syntax import BinaryExpressionSyntax
+from .syntax.expression_syntax import ExpressionSyntax
+from .syntax.literal_expression_syntax import LiteralExpressionSyntax
+from .syntax.parenthesized_expression_syntax import \
+    ParenthesizedExpressionSyntax
+from .syntax.syntaxkind import SyntaxKind
+from .syntax.unary_expression_syntax import UnaryExpressionSyntax
 
 
 class Evaluator:
