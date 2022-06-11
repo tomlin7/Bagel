@@ -9,7 +9,7 @@ class LiteralExpressionSyntax(ExpressionSyntax):
 
     @property
     def kind(self) -> SyntaxKind:
-        return SyntaxKind.NumberExpression
+        return SyntaxKind.LiteralExpression
 
     def get_children(self) -> list:
         return [self.literal_token]

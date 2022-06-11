@@ -15,6 +15,6 @@ class SyntaxKind(enum.Enum):
     CloseParenthesisToken = 9
     
     # Expressions
-    NumberExpression = 10
+    LiteralExpression = 10
     BinaryExpression = 11
     ParenthesizedExpression = 12
