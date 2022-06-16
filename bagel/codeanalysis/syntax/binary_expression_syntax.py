@@ -11,7 +11,7 @@ class BinaryExpressionSyntax(ExpressionSyntax):
 
     @property
     def kind(self) -> SyntaxKind:
-        return SyntaxKind.BinaryExpression
+        return SyntaxKind.BINARYEXPRESSION
 
     def get_children(self) -> list:
         # can be an array too

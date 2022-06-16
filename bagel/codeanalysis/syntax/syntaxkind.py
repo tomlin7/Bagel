@@ -3,19 +3,19 @@ import enum
 
 class SyntaxKind(enum.Enum):
     # Tokens
-    BadToken = 0
-    EndOfFileToken = 1
-    WhiteSpaceToken = 2
-    NumberToken = 3
-    PlusToken = 4
-    MinusToken = 5
-    StarToken = 6
-    SlashToken = 7
-    OpenParenthesisToken = 8
-    CloseParenthesisToken = 9
+    BADTOKEN = 0
+    EOFTOKEN = 1
+    WHITESPACETOKEN = 2
+    NUMBERTOKEN = 3
+    PLUSTOKEN = 4
+    MINUSTOKEN = 5
+    STARTOKEN = 6
+    SLASHTOKEN = 7
+    OPENPARENTOKEN = 8
+    CLOSEPARENTOKEN = 9
     
     # Expressions
-    LiteralExpression = 10
-    UnaryExpression = 11
-    BinaryExpression = 12
-    ParenthesizedExpression = 13
+    LITERALEXPRESSION = 10
+    UNARYEXPRESSION = 11
+    BINARYEXPRESSION = 12
+    PARENEXPRESSION = 13

@@ -21,10 +21,10 @@ class Parser:
 
         self._tokens.append(token)
 
-        while token.kind != SyntaxKind.EndOfFileToken:
+        while token.kind != SyntaxKind.EOFTOKEN:
             token = lexer.lex()
 
-            if token.kind not in [SyntaxKind.WhiteSpaceToken, SyntaxKind.BadToken]:
+            if token.kind not in [SyntaxKind.WHITESPACETOKEN, SyntaxKind.BADTOKEN]:
                 self._tokens.append(token)
 
         self._diagnostics += lexer.diagnostics
@@ -59,7 +59,7 @@ class Parser:
 
     def parse(self) -> SyntaxTree:
         expression = self.parse_expression()
-        end_of_file_token = self.match_token(SyntaxKind.EndOfFileToken)
+        end_of_file_token = self.match_token(SyntaxKind.EOFTOKEN)
         return SyntaxTree(self._diagnostics, expression, end_of_file_token)
 
     def parse_expression(self, parent_precedence: int=0) -> ExpressionSyntax:
@@ -84,11 +84,11 @@ class Parser:
         return left
 
     def parse_primary_expression(self) -> ExpressionSyntax:
-        if self.current.kind == SyntaxKind.OpenParenthesisToken:
+        if self.current.kind == SyntaxKind.OPENPARENTOKEN:
             left = self.next_token()
             expression = self.parse_expression()
-            right = self.match_token(SyntaxKind.CloseParenthesisToken)
+            right = self.match_token(SyntaxKind.CLOSEPARENTOKEN)
             return ParenthesizedExpressionSyntax(left, expression, right)
 
-        literal_token = self.match_token(SyntaxKind.NumberToken)
+        literal_token = self.match_token(SyntaxKind.NUMBERTOKEN)
         return LiteralExpressionSyntax(literal_token)

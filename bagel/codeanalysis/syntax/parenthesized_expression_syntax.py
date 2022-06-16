@@ -12,7 +12,7 @@ class ParenthesizedExpressionSyntax(ExpressionSyntax):
 
     @property
     def kind(self) -> SyntaxKind:
-        return SyntaxKind.ParenthesizedExpression
+        return SyntaxKind.PARENEXPRESSION
 
     def get_children(self) -> list:
         return [self.open_parenthesis_token, self.expression, self.close_parenthesis_token]

@@ -21,9 +21,9 @@ class Evaluator:
         if isinstance(node, UnaryExpressionSyntax):
             operand = self.evaluate_expression(node.operand)
             
-            if node.operator_token.kind == SyntaxKind.PlusToken:
+            if node.operator_token.kind == SyntaxKind.PLUSTOKEN:
                 return operand
-            if node.operator_token.kind == SyntaxKind.MinusToken:
+            if node.operator_token.kind == SyntaxKind.MINUSTOKEN:
                 return -operand
             
             raise Exception(f"Unexpected unary operator {node.operator_token.kind}")
@@ -32,13 +32,13 @@ class Evaluator:
             left = self.evaluate_expression(node.left)
             right = self.evaluate_expression(node.right)
 
-            if node.operator_token.kind == SyntaxKind.PlusToken:
+            if node.operator_token.kind == SyntaxKind.PLUSTOKEN:
                 return left + right
-            elif node.operator_token.kind == SyntaxKind.MinusToken:
+            elif node.operator_token.kind == SyntaxKind.MINUSTOKEN:
                 return left - right
-            elif node.operator_token.kind == SyntaxKind.StarToken:
+            elif node.operator_token.kind == SyntaxKind.STARTOKEN:
                 return left * right
-            elif node.operator_token.kind == SyntaxKind.SlashToken:
+            elif node.operator_token.kind == SyntaxKind.SLASHTOKEN:
                 return left / right
             else:
                 raise Exception(f"Unexpected binary operator {node.operator_token.kind}")

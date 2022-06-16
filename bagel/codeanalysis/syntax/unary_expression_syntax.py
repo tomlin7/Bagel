@@ -10,7 +10,7 @@ class UnaryExpressionSyntax(ExpressionSyntax):
 
     @property
     def kind(self) -> SyntaxKind:
-        return SyntaxKind.UnaryExpression
+        return SyntaxKind.UNARYEXPRESSION
 
     def get_children(self) -> list:
         # can be an array too
