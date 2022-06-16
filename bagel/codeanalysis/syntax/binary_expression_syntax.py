@@ -4,6 +4,10 @@ from .syntaxtoken import SyntaxToken
 
 
 class BinaryExpressionSyntax(ExpressionSyntax):
+    _left: ExpressionSyntax
+    _operator_token: SyntaxToken
+    _right: ExpressionSyntax
+    
     def __init__(self, left: ExpressionSyntax, operator_token: SyntaxToken, right: ExpressionSyntax):
         self._left = left
         self._operator_token = operator_token

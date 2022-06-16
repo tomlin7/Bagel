@@ -4,6 +4,10 @@ from .syntaxtoken import SyntaxToken
 
 
 class ParenthesizedExpressionSyntax(ExpressionSyntax):
+    _open_parenthesis_token: SyntaxToken
+    _expression: ExpressionSyntax
+    _close_parenthesis_token: SyntaxToken
+    
     def __init__(self, open_parenthesis_token: SyntaxToken, expression: ExpressionSyntax,
                  close_parenthesis_token: SyntaxToken):
         self._open_parenthesis_token = open_parenthesis_token

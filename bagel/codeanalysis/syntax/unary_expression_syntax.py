@@ -4,6 +4,9 @@ from .syntaxtoken import SyntaxToken
 
 
 class UnaryExpressionSyntax(ExpressionSyntax):
+    _operator_token: SyntaxToken
+    _operand: ExpressionSyntax
+    
     def __init__(self, operator_token: SyntaxToken, operand: ExpressionSyntax):
         self._operator_token = operator_token
         self._operand = operand

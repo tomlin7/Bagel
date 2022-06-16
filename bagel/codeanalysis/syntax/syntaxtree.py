@@ -3,6 +3,10 @@ from .syntaxtoken import SyntaxToken
 
 
 class SyntaxTree:
+    _diagnostics: list
+    _root: ExpressionSyntax
+    _end_of_file_token: SyntaxToken
+    
     def __init__(self, diagnostics: list, root: ExpressionSyntax, end_of_file_token: SyntaxToken):
         self._diagnostics = diagnostics
         self._root = root

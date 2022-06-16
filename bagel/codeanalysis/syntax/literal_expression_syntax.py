@@ -4,6 +4,8 @@ from .syntaxtoken import SyntaxToken
 
 
 class LiteralExpressionSyntax(ExpressionSyntax):
+    _literal_token: SyntaxToken
+    
     def __init__(self, literal_token: SyntaxToken):
         self._literal_token = literal_token
 

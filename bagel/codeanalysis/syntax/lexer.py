@@ -3,6 +3,9 @@ from .syntaxtoken import SyntaxToken
 
 
 class Lexer:
+    _text: str
+    _diagnostics: list
+
     def __init__(self, text: str):
         self._text = text
         self._position = 0

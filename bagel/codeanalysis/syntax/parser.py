@@ -11,6 +11,8 @@ from .syntaxfacts import SyntaxFacts
 
 
 class Parser:
+    _diagnostics: list
+    
     def __init__(self, text: str):
         self._diagnostics = []
         self._position = 0
