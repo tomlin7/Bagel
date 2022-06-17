@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .expression_syntax import ExpressionSyntax
 from .syntaxtoken import SyntaxToken
 
@@ -25,7 +27,7 @@ class SyntaxTree:
         return self._end_of_file_token
 
     @staticmethod
-    def parse(text: str) -> object:
+    def parse(text: str) -> SyntaxTree:
         from .parser import Parser
         parser = Parser(text)
         return parser.parse()
