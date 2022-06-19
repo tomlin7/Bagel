@@ -3,5 +3,5 @@ Python implementation of kookielang.
 
 ## REPL
 ```
-python -m bagel
+python bagel
 ```
