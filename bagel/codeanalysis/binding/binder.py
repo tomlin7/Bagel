@@ -36,7 +36,7 @@ class Binder:
                 raise Exception(f"Unexpected syntax {syntax.kind}")
 
     def bind_literal_expression(self, syntax: LiteralExpressionSyntax) -> BoundLiteralExpression:
-        value = syntax.literal_token.value or 0
+        value = syntax.value if syntax.value != None else 0
         return BoundLiteralExpression(value)
 
     def bind_unary_expression(self, syntax: UnaryExpressionSyntax) -> BoundUnaryExpression:

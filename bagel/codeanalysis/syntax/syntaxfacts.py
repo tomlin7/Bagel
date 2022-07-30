@@ -19,3 +19,13 @@ class SyntaxFacts:
                 return 1
             case _:
                 return 0
+    
+    @staticmethod
+    def get_keyword_kind(text: str) -> SyntaxKind:
+        match text:
+            case 'true':
+                return SyntaxKind.TRUEKEYWORD
+            case 'false':
+                return SyntaxKind.FALSEKEYWORD
+            case _:
+                return SyntaxKind.IDENTIFIERTOKEN

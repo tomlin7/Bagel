@@ -86,11 +86,17 @@ class Parser:
         return left
 
     def parse_primary_expression(self) -> ExpressionSyntax:
-        if self.current.kind == SyntaxKind.OPENPARENTOKEN:
-            left = self.next_token()
-            expression = self.parse_expression()
-            right = self.match_token(SyntaxKind.CLOSEPARENTOKEN)
-            return ParenthesizedExpressionSyntax(left, expression, right)
-
-        literal_token = self.match_token(SyntaxKind.NUMBERTOKEN)
-        return LiteralExpressionSyntax(literal_token)
+        match self.current.kind:
+            case SyntaxKind.OPENPARENTOKEN:
+                left = self.next_token()
+                expression = self.parse_expression()
+                right = self.match_token(SyntaxKind.CLOSEPARENTOKEN)
+                return ParenthesizedExpressionSyntax(left, expression, right)
+            case SyntaxKind.TRUEKEYWORD | SyntaxKind.FALSEKEYWORD:
+                keyword_token = self.next_token()
+                value = self.current.kind == SyntaxKind.TRUEKEYWORD
+                a = LiteralExpressionSyntax(keyword_token, value)
+                return a
+            case _:
+                literal_token = self.match_token(SyntaxKind.NUMBERTOKEN)
+                return LiteralExpressionSyntax(literal_token)

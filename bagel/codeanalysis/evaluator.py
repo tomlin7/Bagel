@@ -9,16 +9,16 @@ class Evaluator:
     def __init__(self, root: BoundExpression):
         self._root = root
 
-    def evaluate(self) -> int:
+    def evaluate(self) -> object:
         return self.evaluate_expression(self._root)
 
-    def evaluate_expression(self, node: BoundExpression) -> int:
+    def evaluate_expression(self, node: BoundExpression) -> object:
         if isinstance(node, BoundLiteralExpression):
-            return int(node.value)
+            return node.value
 
         if isinstance(node, BoundUnaryExpression):
-            operand = self.evaluate_expression(node.operand)
-            
+            operand = int(self.evaluate_expression(node.operand))
+
             match node.operator_kind:
                 case BoundUnaryOperatorKind.IDENTITY:
                     return operand
@@ -28,8 +28,8 @@ class Evaluator:
                     raise Exception(f"Unexpected unary operator {node.operator_kind}")
 
         if isinstance(node, BoundBinaryExpression):
-            left = self.evaluate_expression(node.left)
-            right = self.evaluate_expression(node.right)
+            left = int(self.evaluate_expression(node.left))
+            right = int(self.evaluate_expression(node.right))
 
             match node.operator_kind:
                 case BoundBinaryOperatorKind.ADDITION:

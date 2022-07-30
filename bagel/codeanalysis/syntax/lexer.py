@@ -1,3 +1,6 @@
+from curses.ascii import isalpha
+
+from .syntaxfacts import SyntaxFacts
 from .syntaxkind import SyntaxKind
 from .syntaxtoken import SyntaxToken
 
@@ -21,6 +24,10 @@ class Lexer:
             return '\0'
         return self._text[self._position]
 
+    @staticmethod
+    def isletter(c: str) -> bool:
+        return c.isalpha() or c == '_'
+        
     def next(self) -> None:
         self._position += 1
 
@@ -51,6 +58,18 @@ class Lexer:
             length = self._position - start
             text = self._text[start:length + start]
             return SyntaxToken(SyntaxKind.WHITESPACETOKEN, start, text, None)
+
+        if self.isletter(self.current):
+            start = self._position
+
+            while self.isletter(self.current):
+                self.next()
+
+            length = self._position - start
+            text = self._text[start:length + start]
+            kind = SyntaxFacts.get_keyword_kind(text)
+            return SyntaxToken(kind, start, text, None)
+        
 
         match self.current:
             case '+':
