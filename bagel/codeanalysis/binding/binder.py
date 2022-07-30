@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import List
 
 from ..syntax.binary_expression_syntax import BinaryExpressionSyntax
@@ -7,107 +6,13 @@ from ..syntax.literal_expression_syntax import LiteralExpressionSyntax
 from ..syntax.syntaxkind import SyntaxKind
 from ..syntax.unary_expression_syntax import UnaryExpressionSyntax
 
+from .boundexpression import BoundExpression
+from .boundbinaryexpression import BoundBinaryExpression
+from .boundunaryexpression import BoundUnaryExpression
+from .boundliteralexpression import BoundLiteralExpression
+from .boundunaryoperatorkind import BoundUnaryOperatorKind
+from .boundbinaryoperatorkind import BoundBinaryOperatorKind
 
-class BoundNodeKind(Enum):
-    LITERALEXPRESSION = 0
-    UNARYEXPRESSION = 1
-    BINARYEXPRESSION = 2
-
-class BoundNode:
-    _kind: BoundNodeKind
-
-    @property
-    def kind(self) -> BoundNodeKind:
-        return self._kind
-
-class BoundExpression(BoundNode):
-    _type: object
-
-    @property
-    def type(self):
-        return self._type
-
-class BoundUnaryOperatorKind(Enum):
-    IDENTITY = 0
-    NEGATION = 1
-
-class BoundLiteralExpression(BoundExpression):
-    _value: object
-
-    def __init__(self, value: object):
-        self._value = value
-    
-    @property
-    def kind(self) -> BoundNodeKind:
-        return BoundNodeKind.LITERALEXPRESSION
-
-    @property
-    def type(self):
-        return type(self._value)
-    
-    @property
-    def value(self):
-        return self._value
-
-class BoundUnaryExpression(BoundExpression):
-    _operator_kind: BoundUnaryOperatorKind
-    _operand: BoundExpression
-
-    def __init__(self, operator_kind: BoundUnaryOperatorKind, operand: BoundExpression):
-        self._operator_kind = operator_kind
-        self._operand = operand
-    
-    @property
-    def kind(self) -> BoundNodeKind:
-        return BoundNodeKind.UNARYEXPRESSION
-    
-    @property
-    def type(self):
-        return self._operand.type
-    
-    @property
-    def operator_kind(self) -> BoundUnaryOperatorKind:
-        return self._operator_kind
-    
-    @property
-    def operand(self) -> BoundExpression:
-        return self._operand
-
-class BoundBinaryOperatorKind(Enum):
-    ADDITION = 0
-    SUBTRACTION = 1
-    MULTIPLICATION = 2
-    DIVISION = 3
-
-class BoundBinaryExpression(BoundExpression):
-    _left: BoundExpression
-    _operator_kind: BoundUnaryOperatorKind
-    _right: BoundExpression
-
-    def __init__(self, left: BoundExpression, operator_kind: BoundBinaryOperatorKind, right: BoundExpression):
-        self._left = left
-        self._operator_kind = operator_kind
-        self._right = right
-    
-    @property
-    def kind(self) -> BoundNodeKind:
-        return BoundNodeKind.BINARYEXPRESSION
-
-    @property
-    def type(self):
-        return self._left.type
-        
-    @property
-    def left(self) -> BoundExpression:
-        return self._left
-
-    @property
-    def operator_kind(self) -> BoundUnaryOperatorKind:
-        return self._operator_kind
-    
-    @property
-    def right(self) -> BoundExpression:
-        return self._right
 
 class Binder:
     _diagnostics: List[str]

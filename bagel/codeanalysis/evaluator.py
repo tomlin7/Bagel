@@ -1,4 +1,4 @@
-from .binding.binder import (BoundBinaryExpression, BoundBinaryOperatorKind,
+from .binding import (BoundBinaryExpression, BoundBinaryOperatorKind,
                              BoundExpression, BoundLiteralExpression,
                              BoundUnaryExpression, BoundUnaryOperatorKind)
 
