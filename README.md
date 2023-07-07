@@ -1,5 +1,5 @@
 # Bagel
-Python implementation of kookielang.
+Compiler written in python
 
 ## REPL
 ```
