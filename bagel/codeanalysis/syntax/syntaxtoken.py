@@ -3,6 +3,11 @@ from .syntaxnode import SyntaxNode
 
 
 class SyntaxToken(SyntaxNode):
+    _kind: SyntaxKind
+    _position: int
+    _text: str
+    _value: object
+    
     def __init__(self, kind: SyntaxKind, position: int, text: str, value: object):
         self._kind = kind
         self._position = position

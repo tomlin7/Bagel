@@ -1,37 +1,46 @@
-from .binary_expression_syntax import BinaryExpressionSyntax
-from .expression_syntax import ExpressionSyntax
-from .literal_expression_syntax import LiteralExpressionSyntax
-from .parenthesized_expression_syntax import ParenthesizedExpressionSyntax
-from .syntaxkind import SyntaxKind
+from .binding import (BoundBinaryExpression, BoundBinaryOperatorKind,
+                             BoundExpression, BoundLiteralExpression,
+                             BoundUnaryExpression, BoundUnaryOperatorKind)
 
 
 class Evaluator:
-    def __init__(self, root: ExpressionSyntax):
+    _root: BoundExpression
+
+    def __init__(self, root: BoundExpression):
         self._root = root
 
-    def evaluate(self) -> int:
+    def evaluate(self) -> object:
         return self.evaluate_expression(self._root)
 
-    def evaluate_expression(self, node: ExpressionSyntax) -> int:
-        if type(node) is LiteralExpressionSyntax:
-            return int(node.number_token.value)
+    def evaluate_expression(self, node: BoundExpression) -> object:
+        if isinstance(node, BoundLiteralExpression):
+            return node.value
 
-        if type(node) is BinaryExpressionSyntax:
-            left = self.evaluate_expression(node.left)
-            right = self.evaluate_expression(node.right)
+        if isinstance(node, BoundUnaryExpression):
+            operand = int(self.evaluate_expression(node.operand))
 
-            if node.operator_token.kind == SyntaxKind.PlusToken:
-                return left + right
-            elif node.operator_token.kind == SyntaxKind.MinusToken:
-                return left - right
-            elif node.operator_token.kind == SyntaxKind.StarToken:
-                return left * right
-            elif node.operator_token.kind == SyntaxKind.SlashToken:
-                return left / right
-            else:
-                raise Exception(f"Unexpected binary operator {node.operator_token.kind}")
+            match node.operator_kind:
+                case BoundUnaryOperatorKind.IDENTITY:
+                    return operand
+                case BoundUnaryOperatorKind.NEGATION:
+                    return -operand
+                case _:
+                    raise Exception(f"Unexpected unary operator {node.operator_kind}")
 
-        if type(node) is ParenthesizedExpressionSyntax:
-            return self.evaluate_expression(node.expression)
+        if isinstance(node, BoundBinaryExpression):
+            left = int(self.evaluate_expression(node.left))
+            right = int(self.evaluate_expression(node.right))
+
+            match node.operator_kind:
+                case BoundBinaryOperatorKind.ADDITION:
+                    return left + right
+                case BoundBinaryOperatorKind.SUBTRACTION:
+                    return left - right
+                case BoundBinaryOperatorKind.MULTIPLICATION:
+                    return left * right
+                case BoundBinaryOperatorKind.DIVISION:
+                    return left / right
+                case _:
+                    raise Exception(f"Unexpected binary operator {node.operator_kind}")
 
         raise Exception(f"Unexpected node {node.kind}")

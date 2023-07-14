@@ -3,13 +3,14 @@ import os
 import colorama
 from colorama import Fore
 
+from .codeanalysis.binding.binder import Binder
 from .codeanalysis.evaluator import Evaluator
-from .codeanalysis.syntaxnode import SyntaxNode
-from .codeanalysis.syntaxtoken import SyntaxToken
-from .codeanalysis.syntaxtree import SyntaxTree
+from .codeanalysis.syntax.syntaxnode import SyntaxNode
+from .codeanalysis.syntax.syntaxtoken import SyntaxToken
+from .codeanalysis.syntax.syntaxtree import SyntaxTree
 
 colorama.init(autoreset=True)
-show_tree = False
+SHOW_TREE = False
 
 
 def pretty_print(node: SyntaxNode, indent: str = "", is_last: bool = True):
@@ -40,49 +41,30 @@ def pretty_print(node: SyntaxNode, indent: str = "", is_last: bool = True):
 while True:
     line = input("» ")
 
-    # ideas
-    # a = input("» ")
-    # a = input("› ")
-    # a = input("¶ ")
-    # a = input("~ ")
-    # a = input("⇝ ")
-    # a = input("⇢ ")
-    # a = input("⇻ ")
-    # a = input("⇾ ")
-    # a = input("∢ ")
-    # a = input("∝ ")
-    # a = input("⊱ ")
-
-    # a = input("⊶ ")
-    # a = input("⊷ ")
-    # a = input("⊸ ")
-
-    # a = input("⋉ ")
-    # a = input("⋯ ")
-    # a = input("⨊ ")
-    # a = input("⨭ ")
-    # a = input("⫻ ")
-
     if line is None or line == "":
         break
 
     if line == "#showtree":
-        show_tree = not show_tree
-        print("Showing parser trees" if show_tree else "Not showing parser trees")
+        SHOW_TREE = not SHOW_TREE
+        print("Showing parser trees" if SHOW_TREE else "Not showing parser trees")
         continue
     elif line == "#cls":
         os.system('cls')
         continue
 
     syntax_tree = SyntaxTree.parse(line)
+    binder = Binder()
+    bound_expression = binder.bind_expression(syntax_tree.root)
 
-    if show_tree:
+    diagnostics = syntax_tree.diagnostics + binder.diagnostics
+
+    if SHOW_TREE:
         pretty_print(syntax_tree.root)
 
-    if not len(syntax_tree.diagnostics) > 0:
-        evaluator = Evaluator(syntax_tree.root)
+    if not any(syntax_tree.diagnostics):
+        evaluator = Evaluator(bound_expression)
         result = evaluator.evaluate()
-        print(str(result))
+        print(result)
     else:
         for _diagnostic in syntax_tree.diagnostics:
             print(Fore.RED + _diagnostic)
